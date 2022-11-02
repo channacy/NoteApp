@@ -4,6 +4,10 @@ from flask_login import UserMixin
 from werkeug.security import generate_password_hash, check_password_hash, generate_password_hash
 from datetime import datetime
 
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -16,9 +20,10 @@ class User(UserMixin, db.Model):
 
 class Post():
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(70))
     description = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return '<Post {}>'.format(self.description)
